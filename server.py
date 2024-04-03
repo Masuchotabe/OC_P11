@@ -29,7 +29,7 @@ def index():
 def showSummary():
     club = [club for club in clubs if club['email'] == request.form['email']]
     if club:
-        return render_template('welcome.html', club=club, competitions=competitions)
+        return render_template('welcome.html', club=club[0], competitions=competitions)
     else:
         flash("Sorry, that email wasn't found.")
         error_message = "Email not found. Please try again."
