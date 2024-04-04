@@ -44,7 +44,7 @@ class TestIndex:
     def test_index_get(self, client):
         response = client.get('/')
         assert response.status_code == 200
-        assert b"""<form action="showSummary" method="post">""" in response.data
+        assert """<form action="showSummary" method="post">""" in response.data.decode()
 
     def test_index_post(self, client):
         response = client.post('/')
@@ -62,3 +62,5 @@ class TestLogin:
         response = client.post('/showSummary', data=data, follow_redirects=True)
         assert response.status_code == 404
         assert b"""Email not found. Please try again.""" in response.data
+        assert """Email not found. Please try again.""" in response.data.decode()
+

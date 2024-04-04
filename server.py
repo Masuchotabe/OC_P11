@@ -14,6 +14,14 @@ def loadCompetitions():
          return listOfCompetitions
 
 
+def get_dict_list_item_by_key(dict_list, key, value_to_search):
+    """Retourne l'élément de la liste de dictionnaires dont dict[key]=value_to_search sinon None"""
+    for item in dict_list:
+        if item.get(key) == value_to_search:
+            return item
+    else:
+        return None
+
 app = Flask(__name__)
 app.secret_key = 'something_special'
 
@@ -27,9 +35,9 @@ def index():
 
 @app.route('/showSummary',methods=['POST'])
 def showSummary():
-    club = [club for club in clubs if club['email'] == request.form['email']]
+    club = get_dict_list_item_by_key(clubs, 'email', request.form['email'])
     if club:
-        return render_template('welcome.html', club=club[0], competitions=competitions)
+        return render_template('welcome.html', club=club, competitions=competitions)
     else:
         flash("Sorry, that email wasn't found.")
         error_message = "Email not found. Please try again."
@@ -38,19 +46,19 @@ def showSummary():
 
 @app.route('/book/<competition>/<club>')
 def book(competition,club):
-    foundClub = [c for c in clubs if c['name'] == club][0]
-    foundCompetition = [c for c in competitions if c['name'] == competition][0]
+    foundClub = get_dict_list_item_by_key(clubs, 'name', club)
+    foundCompetition = get_dict_list_item_by_key(competitions, 'name', competition)
     if foundClub and foundCompetition:
         return render_template('booking.html',club=foundClub,competition=foundCompetition)
     else:
         flash("Something went wrong-please try again")
-        return render_template('welcome.html', club=club, competitions=competitions)
+        return render_template('welcome.html', club=club, competitions=competitions), 404
 
 
 @app.route('/purchasePlaces',methods=['POST'])
 def purchasePlaces():
-    competition = [c for c in competitions if c['name'] == request.form['competition']][0]
-    club = [c for c in clubs if c['name'] == request.form['club']][0]
+    competition = get_dict_list_item_by_key(competitions, 'name', request.form['competition'])
+    club = get_dict_list_item_by_key(clubs, 'name', request.form['club'])
     placesRequired = int(request.form['places'])
     competition['numberOfPlaces'] = int(competition['numberOfPlaces'])-placesRequired
     flash('Great-booking complete!')
