@@ -7,14 +7,8 @@
 <body>
         <h2>Welcome, {{club['email']}} </h2><a href="{{url_for('logout')}}">Logout</a>
 
-    {% with messages = get_flashed_messages()%}
-    {% if messages %}
-        <ul>
-       {% for message in messages %}
-            <li>{{message}}</li>
-        {% endfor %}
-       </ul>
-    {% endif%}
+    {% include "partial_messages.html" %}
+
     Points available: {{club['points']}}
     <h3>Competitions:</h3>
     <ul>

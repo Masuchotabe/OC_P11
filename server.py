@@ -60,6 +60,10 @@ def purchasePlaces():
     competition = get_dict_list_item_by_key(competitions, 'name', request.form['competition'])
     club = get_dict_list_item_by_key(clubs, 'name', request.form['club'])
     placesRequired = int(request.form['places'])
+    max_places = int(club['points'])
+    if placesRequired > max_places:
+        flash(f"Sorry, you can't purchase more than {max_places} places")
+        return render_template('booking.html',club=club,competition=competition)
     competition['numberOfPlaces'] = int(competition['numberOfPlaces'])-placesRequired
     flash('Great-booking complete!')
     return render_template('welcome.html', club=club, competitions=competitions)
