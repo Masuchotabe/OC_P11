@@ -61,6 +61,5 @@ class TestLogin:
         data = {'email': 'unknown@example.com'}
         response = client.post('/showSummary', data=data, follow_redirects=True)
         assert response.status_code == 404
-        assert b"""Email not found. Please try again.""" in response.data
         assert """Email not found. Please try again.""" in response.data.decode()
 
