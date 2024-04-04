@@ -28,6 +28,9 @@ app.secret_key = 'something_special'
 competitions = loadCompetitions()
 clubs = loadClubs()
 
+# Maximum number of place a club can purchase
+MAX_PLACES_BY_CLUB = 12
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -48,8 +51,13 @@ def showSummary():
 def book(competition,club):
     foundClub = get_dict_list_item_by_key(clubs, 'name', club)
     foundCompetition = get_dict_list_item_by_key(competitions, 'name', competition)
+    max_places = min(int(foundClub['points']), MAX_PLACES_BY_CLUB)
     if foundClub and foundCompetition:
-        return render_template('booking.html',club=foundClub,competition=foundCompetition)
+        return render_template('booking.html',
+                               club=foundClub,
+                               competition=foundCompetition,
+                               max_places=max_places
+                               )
     else:
         flash("Something went wrong-please try again")
         return render_template('welcome.html', club=club, competitions=competitions), 404
@@ -60,10 +68,14 @@ def purchasePlaces():
     competition = get_dict_list_item_by_key(competitions, 'name', request.form['competition'])
     club = get_dict_list_item_by_key(clubs, 'name', request.form['club'])
     placesRequired = int(request.form['places'])
-    max_places = int(club['points'])
+    max_places = min(int(club['points']), MAX_PLACES_BY_CLUB)
     if placesRequired > max_places:
         flash(f"Sorry, you can't purchase more than {max_places} places")
-        return render_template('booking.html',club=club,competition=competition), 422
+        return render_template('booking.html',
+                               club=club,
+                               competition=competition,
+                               max_places=max_places
+                               ), 422
     competition['numberOfPlaces'] = int(competition['numberOfPlaces'])-placesRequired
     flash('Great-booking complete!')
     return render_template('welcome.html', club=club, competitions=competitions)
