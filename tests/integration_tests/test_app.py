@@ -2,6 +2,7 @@ import pytest
 
 import server
 from server import app
+from server import get_dict_list_item_by_key
 
 
 @pytest.fixture(autouse=True)
@@ -38,6 +39,36 @@ def client():
     app.config['TESTING'] = True
     with app.test_client() as client:
         yield client
+
+
+"""def get_dict_list_item_by_key(dict_list, key, value_to_search):
+    for item in dict_list:
+        if item.get(key) == value_to_search:
+            return item
+    else:
+        return None"""
+
+
+@pytest.fixture
+def fake_data():
+    return [
+        {"name": "test club 1", "email": "email@domaine.com"},
+        {"name": "test club 2", "email": "email2@domaine.com"},
+    ]
+
+
+class TestGetDictItem:
+    def test_with_list_dict(self, fake_data):
+        item = get_dict_list_item_by_key(dict_list=fake_data, key="email", value_to_search="email@domaine.com")
+        assert item == fake_data[0]
+
+    def test_with_unknown_key(self, fake_data):
+        item = get_dict_list_item_by_key(dict_list=fake_data, key="other_key", value_to_search="email@domaine.com")
+        assert item is None
+
+    def test_with_unknown_value(self, fake_data):
+        item = get_dict_list_item_by_key(dict_list=fake_data, key="email", value_to_search="unknown_email@domaine.com")
+        assert item is None
 
 
 class TestIndex:
