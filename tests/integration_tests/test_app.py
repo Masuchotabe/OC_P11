@@ -41,14 +41,6 @@ def client():
         yield client
 
 
-"""def get_dict_list_item_by_key(dict_list, key, value_to_search):
-    for item in dict_list:
-        if item.get(key) == value_to_search:
-            return item
-    else:
-        return None"""
-
-
 @pytest.fixture
 def fake_data():
     return [
