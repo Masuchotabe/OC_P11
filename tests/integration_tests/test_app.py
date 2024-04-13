@@ -1,4 +1,5 @@
 import pytest
+from flask import url_for
 
 import server
 from server import app
@@ -21,7 +22,7 @@ def mocked_json_data(mocker):
     fake_competitions_data = [
         {
             "name": "test fest 1",
-            "date": "2020-03-27 10:00:00",
+            "date": "2026-03-27 10:00:00",
             "numberOfPlaces": "25"
         },
         {
@@ -37,6 +38,8 @@ def mocked_json_data(mocker):
 @pytest.fixture
 def client():
     app.config['TESTING'] = True
+    app_context = app.test_request_context()
+    app_context.push()
     with app.test_client() as client:
         yield client
 
@@ -86,6 +89,12 @@ class TestLogin:
         assert response.status_code == 404
         assert """Email not found. Please try again.""" in response.data.decode()
 
+
+class TestBooking:
+    def test_booking_with_good_args(self, client):
+        url = url_for('book', competition='test fest 1', club='test club 1', _external=False)
+        response = client.get(url)
+        assert response.status_code == 200
 
 class TestPurchasePlace:
     def test_purchase_place_ok(self, client):

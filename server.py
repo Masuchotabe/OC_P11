@@ -1,6 +1,6 @@
 import json
 from flask import Flask, render_template, request, redirect, flash, url_for, render_template_string
-
+from datetime import datetime
 
 def loadClubs():
     with open('clubs.json') as c:
@@ -51,16 +51,21 @@ def showSummary():
 def book(competition,club):
     foundClub = get_dict_list_item_by_key(clubs, 'name', club)
     foundCompetition = get_dict_list_item_by_key(competitions, 'name', competition)
-    max_places = min(int(foundClub['points']), MAX_PLACES_BY_CLUB)
-    if foundClub and foundCompetition:
-        return render_template('booking.html',
-                               club=foundClub,
-                               competition=foundCompetition,
-                               max_places=max_places
-                               )
-    else:
+
+    if datetime.strptime(foundCompetition.get('date'), "%Y-%m-%d %H:%M:%S") < datetime.now():
+        flash("You cannot purchase places on past competitions")
+        return render_template('welcome.html', club=foundClub, competitions=competitions), 401
+
+    if not (foundClub and foundCompetition):
         flash("Something went wrong-please try again")
-        return render_template('welcome.html', club=club, competitions=competitions), 404
+        return render_template('welcome.html', club=foundClub, competitions=competitions), 404
+
+    max_places = min(int(foundClub['points']), MAX_PLACES_BY_CLUB)
+    return render_template('booking.html',
+                           club=foundClub,
+                           competition=foundCompetition,
+                           max_places=max_places
+                           )
 
 
 @app.route('/purchasePlaces',methods=['POST'])
