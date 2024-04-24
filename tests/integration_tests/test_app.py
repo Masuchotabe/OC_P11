@@ -124,7 +124,7 @@ class TestBooking:
         assert """Something went wrong-please try again""" in response.data.decode()
         assert response.status_code == 404
 
-    def test_booking_bad_competition(self, client, mocker):
+    def test_booking_bad_competition(self, client):
         """test booking with bad club in url"""
 
         url = url_for('book', competition='test fest 157', club='test club 1', _external=False)
