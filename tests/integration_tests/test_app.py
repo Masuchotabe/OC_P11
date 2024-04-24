@@ -96,6 +96,13 @@ class TestBooking:
         response = client.get(url)
         assert response.status_code == 200
 
+    def test_booking_in_past_competition(self, client):
+        url = url_for('book', competition='test fest 2', club='test club 1', _external=False)
+        response = client.get(url)
+        assert "You cannot purchase places on past competitions" in response.data.decode()
+        assert response.status_code == 401
+
+
 class TestPurchasePlace:
     def test_purchase_place_ok(self, client):
         data = {'competition': 'test fest 2', 'club': 'test club 2', 'places': 3}
@@ -106,12 +113,13 @@ class TestPurchasePlace:
 
     def test_purchase_place_wrong_max_places(self, client):
         """test that we can't purchase more than 12 places"""
-        data = {'competition': 'test fest 2', 'club': 'test club 1', 'places': 13}
+        data = {'competition': 'test fest 1', 'club': 'test club 1', 'places': 13}
         response = client.post('/purchasePlaces', data=data)
         assert response.status_code == 422
 
     def test_purchase_place_wrong_club_places(self, client):
         """test that we can't purchase more than club places"""
-        data = {'competition': 'test fest 2', 'club': 'test club 2', 'places': 5}
+        data = {'competition': 'test fest 1', 'club': 'test club 2', 'places': 5}
         response = client.post('/purchasePlaces', data=data)
         assert response.status_code == 422
+
