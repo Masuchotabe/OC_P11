@@ -110,6 +110,7 @@ class TestPurchasePlace:
         assert response.status_code == 200
         assert """Great-booking complete!""" in response.data.decode()
         assert server.competitions[1].get('numberOfPlaces') == 10
+        assert server.clubs[1].get('points') == 1
 
     def test_purchase_place_wrong_max_places(self, client):
         """test that we can't purchase more than 12 places"""
