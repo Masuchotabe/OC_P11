@@ -28,7 +28,7 @@ def mocked_json_data(mocker):
         {
             "name": "test fest 2",
             "date": "2020-10-22 13:30:00",
-            "numberOfPlaces": "13"
+            "numberOfPlaces": "11"
         }
     ]
     mocker.patch.object(server, 'clubs', fake_clubs_data)
@@ -92,15 +92,45 @@ class TestLogin:
 
 class TestBooking:
     def test_booking_with_good_args(self, client):
+
         url = url_for('book', competition='test fest 1', club='test club 1', _external=False)
         response = client.get(url)
         assert response.status_code == 200
 
     def test_booking_in_past_competition(self, client):
+        """we can't purchase place for a competition in the past"""
         url = url_for('book', competition='test fest 2', club='test club 1', _external=False)
         response = client.get(url)
         assert "You cannot purchase places on past competitions" in response.data.decode()
         assert response.status_code == 401
+
+    def test_booking_full_competition(self, client, mocker):
+        """we can't purchase place if the competition is full"""
+        mocked_competitions = [{
+            "name": "test fest 2",
+            "date": "2026-03-27 10:00:00",
+            "numberOfPlaces": "0"
+        }]
+        mocker.patch.object(server, 'competitions', mocked_competitions)
+        url = url_for('book', competition='test fest 2', club='test club 1', _external=False)
+        response = client.get(url)
+        assert """The competition is already full""" in response.data.decode()
+        assert response.status_code == 401
+
+    def test_booking_bad_club(self, client):
+        """test booking with bad club in url"""
+        url = url_for('book', competition='test fest 2', club='test club 2541', _external=False)
+        response = client.get(url)
+        assert """Something went wrong-please try again""" in response.data.decode()
+        assert response.status_code == 404
+
+    def test_booking_bad_competition(self, client, mocker):
+        """test booking with bad club in url"""
+
+        url = url_for('book', competition='test fest 157', club='test club 1', _external=False)
+        response = client.get(url)
+        assert """Something went wrong-please try again""" in response.data.decode()
+        assert response.status_code == 404
 
 
 class TestPurchasePlace:
@@ -109,7 +139,7 @@ class TestPurchasePlace:
         response = client.post('/purchasePlaces', data=data)
         assert response.status_code == 200
         assert """Great-booking complete!""" in response.data.decode()
-        assert server.competitions[1].get('numberOfPlaces') == 10
+        assert server.competitions[1].get('numberOfPlaces') == 8
         assert server.clubs[1].get('points') == 1
 
     def test_purchase_place_wrong_max_places(self, client):
@@ -124,3 +154,8 @@ class TestPurchasePlace:
         response = client.post('/purchasePlaces', data=data)
         assert response.status_code == 422
 
+    def test_purchase_place_wrong_competition_places(self, client):
+        """test that we can't purchase more than competition places"""
+        data = {'competition': 'test fest 2', 'club': 'test club 1', 'places': 12}
+        response = client.post('/purchasePlaces', data=data)
+        assert response.status_code == 422

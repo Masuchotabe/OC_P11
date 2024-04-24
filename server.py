@@ -52,15 +52,19 @@ def book(competition,club):
     foundClub = get_dict_list_item_by_key(clubs, 'name', club)
     foundCompetition = get_dict_list_item_by_key(competitions, 'name', competition)
 
-    if datetime.strptime(foundCompetition.get('date'), "%Y-%m-%d %H:%M:%S") < datetime.now():
-        flash("You cannot purchase places on past competitions")
-        return render_template('welcome.html', club=foundClub, competitions=competitions), 401
-
     if not (foundClub and foundCompetition):
         flash("Something went wrong-please try again")
         return render_template('welcome.html', club=foundClub, competitions=competitions), 404
 
-    max_places = min(int(foundClub['points']), MAX_PLACES_BY_CLUB)
+    if datetime.strptime(foundCompetition.get('date'), "%Y-%m-%d %H:%M:%S") < datetime.now():
+        flash("You cannot purchase places on past competitions")
+        return render_template('welcome.html', club=foundClub, competitions=competitions), 401
+
+    if int(foundCompetition.get('numberOfPlaces')) < 1:
+        flash("The competition is already full")
+        return render_template('welcome.html', club=foundClub, competitions=competitions), 401
+
+    max_places = min(int(foundClub['points']), int(foundCompetition['numberOfPlaces']), MAX_PLACES_BY_CLUB)
     return render_template('booking.html',
                            club=foundClub,
                            competition=foundCompetition,
@@ -73,7 +77,7 @@ def purchasePlaces():
     competition = get_dict_list_item_by_key(competitions, 'name', request.form['competition'])
     club = get_dict_list_item_by_key(clubs, 'name', request.form['club'])
     placesRequired = int(request.form['places'])
-    max_places = min(int(club['points']), MAX_PLACES_BY_CLUB)
+    max_places = min(int(club['points']), int(competition['numberOfPlaces']), MAX_PLACES_BY_CLUB)
     if placesRequired > max_places:
         flash(f"Sorry, you can't purchase more than {max_places} places")
         return render_template('booking.html',
