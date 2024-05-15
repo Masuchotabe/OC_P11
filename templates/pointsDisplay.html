@@ -1,0 +1,30 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Club Points Board</title>
+</head>
+<body>
+    <h2>Club points board</h2>
+    <table>
+        <caption>List of clubs and points</caption>
+        <thead>
+            <tr>
+                <th>Club</th>
+                <th>Points</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for club in clubs %}
+                <tr>
+                    <td>{{ club.name }}</td>
+                    <td>{{ club.points }}</td>
+                </tr>
+            {% else %}
+                No club yet.
+            {% endfor %}
+        </tbody>
+    </table>
+
+</body>
+</html>

@@ -92,7 +92,6 @@ class TestLogin:
 
 class TestBooking:
     def test_booking_with_good_args(self, client):
-
         url = url_for('book', competition='test fest 1', club='test club 1', _external=False)
         response = client.get(url)
         assert response.status_code == 200
@@ -159,3 +158,19 @@ class TestPurchasePlace:
         data = {'competition': 'test fest 2', 'club': 'test club 1', 'places': 12}
         response = client.post('/purchasePlaces', data=data)
         assert response.status_code == 422
+
+
+class TestPointsDisplay:
+    def test_points_display(self, client):
+        response = client.get('/pointsDisplay')
+
+        assert response.status_code == 200
+        assert "<caption>List of clubs and points</caption>" in response.data.decode()
+        assert "No club yet." not in response.data.decode()
+
+    def test_points_display_empty(self, client, mocker):
+        mocker.patch.object(server, 'clubs', {})
+        response = client.get('/pointsDisplay')
+        assert response.status_code == 200
+        assert "<caption>List of clubs and points</caption>" in response.data.decode()
+        assert "No club yet." in response.data.decode()
