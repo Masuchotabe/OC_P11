@@ -44,8 +44,8 @@
 
 5. Testing
 
-    You are free to use whatever testing framework you like-the main thing is that you can show what tests you are using.
-
-    We also like to show how well we're testing, so there's a module called 
-    [coverage](https://coverage.readthedocs.io/en/coverage-5.1/) you should add to your project.
+    We're using pytest framework for testing and [coverage](https://coverage.readthedocs.io/en/7.5.1/) to see how well we're testing.  
+    A HTML report is included in hmtlcov directory. 
+    If you want to execute again the tests and generate a report use this command in the source directory :  
+`pytest --cov=. --cov-report html`
 
