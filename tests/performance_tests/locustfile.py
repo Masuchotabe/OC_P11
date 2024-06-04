@@ -20,7 +20,7 @@ class WebsiteUser(HttpUser):
 
     @task
     def purchase_places(self):
-        self.client.post('/purchasePlaces', {'club': '', 'competition': 'Summer Strongman'})
+        self.client.post('/purchasePlaces', {'club': 'Simply Lift', 'competition': 'Summer Strongman', 'places': 1})
 
 
     # @task
