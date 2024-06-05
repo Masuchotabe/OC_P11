@@ -84,7 +84,7 @@ def purchasePlaces():
                                club=club,
                                competition=competition,
                                max_places=max_places
-                               ), 422
+                               )
     competition['numberOfPlaces'] = int(competition['numberOfPlaces'])-placesRequired
     club['points'] = int(club['points'])-placesRequired
     flash('Great-booking complete!')
