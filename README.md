@@ -9,9 +9,9 @@
 
     This project uses the following technologies:
 
-    * Python v3.x+
+    * Python v3.8+
 
-    * [Flask](https://flask.palletsprojects.com/en/1.1.x/)
+    * [Flask](https://flask.palletsprojects.com/en/3.0.x/)
 
         Whereas Django does a lot of things for us out of the box, Flask allows us to add only what we need. 
      
@@ -31,9 +31,7 @@
 
     - Rather than hunting around for the packages you need, you can install in one step. Type <code>pip install -r requirements.txt</code>. This will install all the packages listed in the respective file. If you install a package, make sure others know by updating the requirements.txt file. An easy way to do this is <code>pip freeze > requirements.txt</code>
 
-    - Flask requires that you set an environmental variable to the python file. However you do that, you'll want to set the file to be <code>server.py</code>. Check [here](https://flask.palletsprojects.com/en/1.1.x/quickstart/#a-minimal-application) for more details
-
-    - You should now be ready to test the application. In the directory, type either <code>flask run</code> or <code>python -m flask run</code>. The app should respond with an address you should be able to go to using your browser.
+    - You should now be ready to test the application. In the directory, type <code>python run.py</code>. The app should respond with an address you should be able to go to using your browser.
 
 4. Current Setup
 
@@ -44,8 +42,20 @@
 
 5. Testing
 
-    We're using pytest framework for testing and [coverage](https://coverage.readthedocs.io/en/7.5.1/) to see how well we're testing.  
+    We're using pytest framework for testing and [coverage](https://coverage.readthedocs.io/en/7.5.1/) to see 
+6. how well we're testing.  
     A HTML report is included in hmtlcov directory. 
     If you want to execute again the tests and generate a report use this command in the source directory :  
 `pytest --cov=. --cov-report html`
+  
+6. Performance  
+   Locust is the package for testing the app performance. 
+7. You can start it with this if you're in the root project repository :  
+   `locust -f tests/performance_tests/locustfile.py`
+or navigate to the directory where the locustfile.py is and start locust :
+```
+cd tests/performance_tests
+locust
+```
+   
 
