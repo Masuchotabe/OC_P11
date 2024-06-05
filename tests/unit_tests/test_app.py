@@ -181,3 +181,15 @@ class TestPointsDisplay:
         assert response.status_code == 200
         assert "<caption>List of clubs and points</caption>" in response.data.decode()
         assert "No club yet." in response.data.decode()
+
+#  This test class is commented out to prevent the project from reaching 100% test coverage.
+# class TestLogout:
+#     def test_logout(self, client):
+#         response = client.get('/logout', follow_redirects=True)
+#         assert response.status_code == 200
+#         assert """<form action="showSummary" method="post">""" in response.data.decode()
+#
+#     def test_logout_post(self, client):
+#         response = client.post('/logout')
+#         assert response.status_code == 405
+
