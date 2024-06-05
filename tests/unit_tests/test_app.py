@@ -1,4 +1,5 @@
 import pytest
+import html
 from flask import url_for
 
 import server
@@ -145,19 +146,25 @@ class TestPurchasePlace:
         """test that we can't purchase more than 12 places"""
         data = {'competition': 'test fest 1', 'club': 'test club 1', 'places': 13}
         response = client.post('/purchasePlaces', data=data)
-        assert response.status_code == 422
+        response_html = html.unescape(response.data.decode('utf-8'))
+        assert """Sorry, you can't purchase more than""" in response_html
+        assert response.status_code == 200
 
     def test_purchase_place_wrong_club_places(self, client):
         """test that we can't purchase more than club places"""
         data = {'competition': 'test fest 1', 'club': 'test club 2', 'places': 5}
         response = client.post('/purchasePlaces', data=data)
-        assert response.status_code == 422
+        response_html = html.unescape(response.data.decode('utf-8'))
+        assert """Sorry, you can't purchase more than""" in response_html
+        assert response.status_code == 200
 
     def test_purchase_place_wrong_competition_places(self, client):
         """test that we can't purchase more than competition places"""
         data = {'competition': 'test fest 2', 'club': 'test club 1', 'places': 12}
         response = client.post('/purchasePlaces', data=data)
-        assert response.status_code == 422
+        response_html = html.unescape(response.data.decode('utf-8'))
+        assert """Sorry, you can't purchase more than""" in response_html
+        assert response.status_code == 200
 
 
 class TestPointsDisplay:
